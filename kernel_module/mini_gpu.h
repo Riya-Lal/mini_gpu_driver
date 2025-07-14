@@ -3,22 +3,25 @@
 
 #include <linux/ioctl.h>
 
-#define GPU_MAGIC 'G'
+#define GPU_MAGIC 'g'
 
-//shape types
-#define GPU_SHAPE_RECTANGLE 0
-#define GPU_SHAPE_CIRCLE    1
-
-//IOCTL command to draw a shape
-#define GPU_IOCTL_DRAW_SHAPE _IOW(GPU_MAGIC, 0, struct gpu_command)
+enum gpu_shape_type {
+    GPU_SHAPE_RECTANGLE = 1,
+    GPU_SHAPE_CIRCLE    = 2,
+    GPU_SHAPE_LINE      = 3,
+    GPU_SHAPE_TRIANGLE  = 4
+};
 
 //Data structure for passing shape parameters
 struct gpu_command {
-	int shape; // 0=rectangle, 1=circle
+	int shape; // 1=rectangle, 2=circle
 	int x;
 	int y;
 	int width;
 	int height;
 };
+
+//IOCTL command to draw a shape
+#define GPU_IOCTL_DRAW_SHAPE _IOW(GPU_MAGIC, 0, struct gpu_command)
 
 #endif

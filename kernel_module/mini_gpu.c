@@ -44,25 +44,37 @@ static ssize_t dev_write(struct file *filep, const char *user_buf, size_t len, l
 }
 
 static long mini_gpu_ioctl(struct file *file, unsigned int cmd, unsigned long arg) {
-	struct gpu_command cmd_data;
-	if (copy_from_user(&cmd_data,(struct gpu_command *)arg,sizeof(struct gpu_command))) {
-		return -EFAULT;
-	}
-	switch (cmd) {
-		case GPU_IOCTL_DRAW_SHAPE:
-			if (cmd_data.shape == GPU_SHAPE_RECTANGLE) {
-				printk(KERN_INFO "mini_gpu: Drawing RECTANGLE at (%d, %d) size (%d x %d)\n",
-						cmd_data.x, cmd_data.y, cmd_data.width, cmd_data.height);
-			} else if (cmd_data.shape == GPU_SHAPE_CIRCLE){
-				printk(KERN_INFO "mini_gpu: Drawing CIRCLE at (%d, %d) with diameter %d\n",
-						cmd_data.x, cmd_data.y, cmd_data.width);
-			} else {
-				printk(KERN_WARNING "mini_gpu: UNKNOWN shape: %d\n", cmd_data.shape);
-			}
-			break;
-		default:
-			return -ENOTTY;
-	}
+    struct gpu_command cmd_data;
+    if (copy_from_user(&cmd_data, (struct gpu_command *)arg, sizeof(struct gpu_command))) {
+        return -EFAULT;
+    }
+
+    switch (cmd) {
+        case GPU_IOCTL_DRAW_SHAPE:
+            switch (cmd_data.shape) {
+                case GPU_SHAPE_RECTANGLE:
+                    printk(KERN_INFO "mini_gpu: Drawing RECTANGLE at (%d, %d) size (%d x %d)\n",
+                           cmd_data.x, cmd_data.y, cmd_data.width, cmd_data.height);
+                    break;
+                case GPU_SHAPE_CIRCLE:
+                    printk(KERN_INFO "mini_gpu: Drawing CIRCLE at (%d, %d) with diameter %d\n",
+                           cmd_data.x, cmd_data.y, cmd_data.width);
+                    break;
+                case GPU_SHAPE_LINE:
+                    printk(KERN_INFO "mini_gpu: Drawing LINE from (%d, %d) to (%d, %d)\n",
+                           cmd_data.x, cmd_data.y, cmd_data.width, cmd_data.height);
+                    break;
+                case GPU_SHAPE_TRIANGLE:
+                    printk(KERN_INFO "mini_gpu: Drawing TRIANGLE with base starting at (%d, %d), base = %d, height = %d\n",
+                           cmd_data.x, cmd_data.y, cmd_data.width, cmd_data.height);
+                    break;
+                default:
+                    printk(KERN_WARNING "mini_gpu: UNKNOWN shape: %d\n", cmd_data.shape);
+            }
+            break;
+        default:
+            return -ENOTTY;
+    }
 	return 0;
 }
 
