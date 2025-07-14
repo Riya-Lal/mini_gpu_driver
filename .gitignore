@@ -1,0 +1,8 @@
+*.o
+*.ko
+*.mod.*
+*.order
+*.symvers
+*.cmd
+test_gpu_user
+test_gpu_ioctl_user
